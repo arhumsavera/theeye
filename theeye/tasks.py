@@ -15,7 +15,7 @@ def create_event(data):
         ]
         for field in missing_fields:
             error_dict.pop(field)
-        error_dict["missingefields"] = missing_fields
+        error_dict["missingfields"] = missing_fields
 
         FailedEvent.objects.create(
             session_id=data.get("session_id"),

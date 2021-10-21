@@ -7,6 +7,11 @@ from .serializers import EventSerializer, FailedEventSerializer
 from .tasks import create_event
 
 
+from django.db.models import Q
+import operator
+from functools import reduce
+
+
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
 
@@ -50,5 +55,17 @@ class FailedEventViewSet(viewsets.ReadOnlyModelViewSet):
         session_id = self.request.query_params.get("session_id")
         if session_id is not None:
             queryset = queryset.filter(session_id=session_id)
+
+        missing_fields = self.request.query_params.getlist("missingfields", "")
+
+        if missing_fields:
+            conditions = reduce(
+                operator.and_,
+                [
+                    Q(**{"error__missingfields__contains": value})
+                    for value in missing_fields
+                ],
+            )
+            queryset = queryset.filter(conditions)
 
         return queryset
