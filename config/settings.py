@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # 3rd party
     "rest_framework",
     "celery",
+    "drf_yasg",
     # local
     "theeye",
 ]
