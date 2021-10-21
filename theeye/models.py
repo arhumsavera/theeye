@@ -15,3 +15,13 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.category}_{self.name}"
+
+
+class FailedEvent(models.Model):
+    session_id = models.UUIDField(null=False)
+    error = models.JSONField()
+    received = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{str(self.session_id)}_{self.created_at.isoformat()}"

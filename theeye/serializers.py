@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from .models import Event
+from .models import Event, FailedEvent
 from .validations import payload_validation_dict
 
 # TODO prevent DELETE
@@ -10,7 +10,6 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = "__all__"
 
-    # TODO validation
     def validate(self, data):
         try:
             dict(data["data"])
@@ -32,3 +31,9 @@ class EventSerializer(serializers.ModelSerializer):
                 "Timestamp cannot be ahead of current time"
             )
         return timestamp
+
+
+class FailedEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FailedEvent
+        fields = "__all__"
