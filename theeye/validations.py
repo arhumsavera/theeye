@@ -15,6 +15,7 @@ def validate_form_interaction_submit(data):
     return set(data.keys()) == required
 
 
+# dictionary of functions so each method can be used as a callable against varying validation rules
 payload_validation_dict = {
     "page interaction_pageview": validate_page_interaction_pageview,
     "page interaction_cta click": validate_page_interaction_cta_click,

@@ -5,6 +5,10 @@ from theeye.models import FailedEvent
 
 @shared_task
 def create_event(data):
+    """
+    Attempts to create Event object but creates FailedEvent
+    if is_valid() returns False
+    """
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
         serializer.save()

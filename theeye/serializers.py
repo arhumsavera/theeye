@@ -4,7 +4,7 @@ from rest_framework import serializers
 from .models import Event, FailedEvent
 from .validations import payload_validation_dict
 
-# TODO prevent DELETE
+
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event

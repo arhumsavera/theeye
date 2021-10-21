@@ -2,6 +2,8 @@ from django.utils.dateparse import parse_datetime
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import mixins
+
 from .models import Event, FailedEvent
 from .serializers import EventSerializer, FailedEventSerializer
 from .tasks import create_event
@@ -12,7 +14,15 @@ import operator
 from functools import reduce
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    A viewset that provides `retrieve`, `create`, and `list` actions.
+    """
+
     serializer_class = EventSerializer
 
     def create(self, request):
@@ -20,6 +30,9 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_202_ACCEPTED)
 
     def get_queryset(self):
+        """
+        Enables searching against listed attributes
+        """
         queryset = Event.objects.all()
 
         session_id = self.request.query_params.get("session_id")
@@ -51,6 +64,10 @@ class FailedEventViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FailedEventSerializer
 
     def get_queryset(self):
+        """
+        Enables searching based on session ID and potential missing fields
+        such as name, category, data
+        """
         queryset = FailedEvent.objects.all()
         session_id = self.request.query_params.get("session_id")
         if session_id is not None:
