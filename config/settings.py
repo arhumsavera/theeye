@@ -39,9 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 3rd party
     "rest_framework",
+    "celery",
     # local
     "theeye",
 ]
+
+
+CELERY_BROKER_URL = "amqp://rabbitmq"
+CELERY_IMPORTS = ["theeye.tasks"]
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

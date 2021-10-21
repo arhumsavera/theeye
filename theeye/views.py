@@ -4,29 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Event, FailedEvent
 from .serializers import EventSerializer, FailedEventSerializer
+from .tasks import create_event
 
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
 
     def create(self, request):
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            error_dict = dict(serializer.errors)
-            missing_fields = [
-                k for k, v in error_dict.items() if v == ["This field is required."]
-            ]
-            for field in missing_fields:
-                error_dict.pop(field)
-            error_dict["missingefields"] = missing_fields
-
-            FailedEvent.objects.create(
-                session_id=request.data.get("session_id"),
-                error=error_dict,
-                received=request.data,
-            )
+        create_event.delay(request.data)
         return Response(status=status.HTTP_202_ACCEPTED)
 
     def get_queryset(self):
