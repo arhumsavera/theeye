@@ -1,6 +1,6 @@
 # The Eye
 
-This repo provides endpoints to record "events" of different categories. It is implemented using Django 3.x
+This repository provides endpoints to record "events" of different categories. It is implemented using Django 3.x
 
 ### Instructions to run
 
@@ -94,7 +94,7 @@ Basic auth is provided via `dj-rest-auth`. For convenience, `docker-compose.yml`
 
 Based on the requirements provided in the assesment README, the following design choices were made:
 
-* Since we have multiple events from the same session we don't need it as our primary key and can get awat with a simple table to just store the incoming data
+* Since we have multiple events from the same session we don't need it as our primary key and can get away with a simple table to just store the incoming data
 * Since it's still pretty open about what the payload looks like, the safest bet was to use a JSON field without over complicating the schema.
 * This will be a write heavy application, so we should avoid too many indexes.
 * This application assumed a session ID will always be provided and a v4 UUID
@@ -103,7 +103,7 @@ Based on the requirements provided in the assesment README, the following design
 
 * Based on provided test data we can have multiple events for the same session ID and timestamp
 
-To avoid over engineering, The `FailedEvent` table simply stores the incoming failed request along with information related to the time of arrival ("for cases like incorrect timestamps") and list's of missing fields that are expected. Another option would be to either use just one table for both and mark them as failed|success but for our first version it adds complexity in retrieval. Similarly, if we wanted to store all fields individually, both Event and FailedEvent could inherit from a base model and have different rules for validation.
+To avoid over-engineering, The `FailedEvent` table simply stores the incoming failed request along with information related to the time of arrival ("for cases like incorrect timestamps") and list's of missing fields that are expected. Another option would be to either use just one table for both and mark them as failed|success but for our first version it adds complexity in retrieval. Similarly, if we wanted to store all fields individually, both Event and FailedEvent could inherit from a base model and have different rules for validation.
 
 
 Some simple validation functions are included to demonstrate how variable payload validation can be extended for different types. Right now, as a simple example we just assume to always have a fixed set of fields for some chosen events and check the incoming payload's content accordingly.
@@ -112,3 +112,6 @@ Some simple validation functions are included to demonstrate how variable payloa
 
 
 Since we expect a high volume of requests, the task of adding data to the database is offloaded via Celery workers and using RabbitMQ as our broker.
+
+
+There are a number of nits that can make this project better, more testing around validations/more stress testing/ switching up schema constraints, etc. These can be more fleshed out once more requirements are made available and we're not just looking for a quick prototype.
